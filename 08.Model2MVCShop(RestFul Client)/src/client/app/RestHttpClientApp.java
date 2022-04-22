@@ -31,19 +31,27 @@ public class RestHttpClientApp {
 				
 		
 		System.out.println("\n====================================\n");
-		// 1.1 Http Get 방식 Request : JsonSimple lib 사용
+		// 1.1 Http Post 방식 Request : JsonSimple lib 사용
 		RestHttpClientApp.updateUserTest_JsonSimple();
 		
 //		System.out.println("\n====================================\n");
-//		// 1.1 Http Get 방식 Request : JsonSimple lib 사용
-//		RestHttpClientApp.addUserTest_JsonSimple();		
+//		// 1.1 Http Post 방식 Request : JsonSimple lib 사용
+//		RestHttpClientApp.updateUserTest_Codehaus();
+		
+//		System.out.println("\n====================================\n");
+//		// 1.1 Http Post 방식 Request : JsonSimple lib 사용
+//		RestHttpClientApp.addUserTest_JsonSimple();	
+		
+//		System.out.println("\n====================================\n");
+//		// 1.1 Http Post 방식 Request : JsonSimple lib 사용
+//		RestHttpClientApp.addUserTest_Codehaus();
 		
 //		System.out.println("\n====================================\n");
 //		// 1.1 Http Get 방식 Request : JsonSimple lib 사용
 //		RestHttpClientApp.getUserTest_JsonSimple();
 		
 //		System.out.println("\n====================================\n");
-		// 1.2 Http Get 방식 Request : CodeHaus lib 사용
+//		// 1.2 Http Get 방식 Request : CodeHaus lib 사용
 //		RestHttpClientApp.getUserTest_Codehaus();
 		
 //		System.out.println("\n====================================\n");
@@ -56,8 +64,49 @@ public class RestHttpClientApp {
 	
 	}
 	
+	public static void getUserListTest_JsonSimple() throws Exception{
+	
+		HttpClient httpClient = new DefaultHttpClient();
+		
+		String url= 	"http://127.0.0.1:8080/user/json/getUserList";
+		
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader("Accept", "application/json");
+		httpPost.setHeader("Content-Type", "application/json");
+		
+		JSONObject json = new JSONObject();
+		json.put("CurrentPage", 1);
+		json.put("searchCondition", "");
+		json.put("searchKeyword", "");
+		json.put("pageSize", "3");
+		
+		
+		HttpEntity httpEntity01 = new StringEntity(json.toString(),"utf-8");
+		
+		System.out.println(json.toString());
+		
+		httpPost.setEntity(httpEntity01);
+		
+		HttpResponse httpResponse = httpClient.execute(httpPost);
+		
+		System.out.println(httpResponse);
+		System.out.println();
+		
+		HttpEntity httpEntity = httpResponse.getEntity();
+		
+		InputStream is = httpEntity.getContent();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+		
+		System.out.println("[ Server 에서 받은 Data 확인 ] ");
+		String serverData = br.readLine();
+		System.out.println(serverData);
+		
+		JSONObject jsonobj = (JSONObject)JSONValue.parse(serverData);
+		System.out.println(jsonobj);
+	}
 	
 	
+	//================================================================//	
 	public static void updateUserTest_JsonSimple() throws Exception{
 		
 		HttpClient httpClient = new DefaultHttpClient();
@@ -69,9 +118,8 @@ public class RestHttpClientApp {
 		httpPost.setHeader("Content-Type", "application/json");
 		
 		JSONObject json = new JSONObject();
-		
 		json.put("userId", "test01");
-		json.put("userName", "주호민");
+		json.put("userName", "주호");
 		json.put("phone", "010-5477-4444");
 		json.put("addr", "12345");
 		json.put("email", "sd@naver.com");
@@ -96,10 +144,71 @@ public class RestHttpClientApp {
 		String serverData = br.readLine();
 		System.out.println(serverData);
 		
+		JSONObject jsonobj = (JSONObject)JSONValue.parse(serverData);
+		System.out.println(jsonobj);
+		
 	}
 	
 	
 	
+	
+	public static void updateUserTest_Codehaus() throws Exception{
+		
+		HttpClient httpClient = new DefaultHttpClient();
+		
+		String url= 	"http://127.0.0.1:8080/user/json/updateUser";
+		
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader("Accept", "application/json");
+		httpPost.setHeader("Content-Type", "application/json");
+		
+//		JSONObject json = new JSONObject();
+//		json.put("userId", "test01");
+//		json.put("userName", "주호민");
+//		json.put("phone", "010-5477-4444");
+//		json.put("addr", "12345");
+//		json.put("email", "sd@naver.com");
+		
+		User user01 = new User();
+		user01.setUserId("test02");
+		user01.setUserName("사과");
+		user01.setPhone("010-5477-4444");
+		user01.setAddr("4888");
+		user01.setEmail("dddd@naver.com");
+		
+		ObjectMapper objectMapper01 = new ObjectMapper();
+		String jsonValue = objectMapper01.writeValueAsString(user01);
+		
+		HttpEntity httpEntity01 = new StringEntity(jsonValue.toString(),"utf-8");
+		
+		System.out.println(jsonValue.toString());
+		
+		httpPost.setEntity(httpEntity01);
+		
+		HttpResponse httpResponse = httpClient.execute(httpPost);
+		
+		System.out.println(httpResponse);
+		System.out.println();
+		
+		HttpEntity httpEntity = httpResponse.getEntity();
+		
+		InputStream is = httpEntity.getContent();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+		
+		System.out.println("[ Server 에서 받은 Data 확인 ] ");
+		String serverData = br.readLine();
+		System.out.println(serverData);
+		
+//		JSONObject jsonobj = (JSONObject)JSONValue.parse(serverData);
+//		System.out.println(jsonobj);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		User user = objectMapper.readValue(serverData, User.class);
+		System.out.println(user);
+	}
+	
+	
+		
 	
 	//================================================================//	
 	public static void addUserTest_JsonSimple() throws Exception{
@@ -140,6 +249,59 @@ public class RestHttpClientApp {
 		System.out.println(jsonobj);
 	}
 	
+	
+		
+	
+	public static void addUserTest_Codehaus() throws Exception{
+		
+		HttpClient httpClient = new DefaultHttpClient();
+		
+		String url= 	"http://127.0.0.1:8080/user/json/addUser";
+		
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader("Accept", "application/json");
+		httpPost.setHeader("Content-Type", "application/json");
+		
+//		JSONObject json = new JSONObject();
+//		json.put("userId", "test01");
+//		json.put("password", "12345");
+//		json.put("userName", "이말년");
+		
+		User user01 = new User();
+		user01.setUserId("test02");
+		user01.setPassword("456");
+		user01.setUserName("나무");
+		
+		ObjectMapper objectMapper01 = new ObjectMapper();
+		String jsonValue = objectMapper01.writeValueAsString(user01);
+		
+		HttpEntity httpEntity01 = new StringEntity(jsonValue.toString(),"utf-8");
+		
+		httpPost.setEntity(httpEntity01);
+			
+		HttpResponse httpResponse = httpClient.execute(httpPost);
+		
+		System.out.println(httpResponse);
+		System.out.println();
+		
+		HttpEntity httpEntity = httpResponse.getEntity();
+		
+		InputStream is = httpEntity.getContent();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+		
+//		System.out.println("[ Server 에서 받은 Data 확인 ] ");
+//		String serverData = br.readLine();
+//		System.out.println(serverData);
+		
+		//==> 내용읽기(JSON Value 확인)
+		JSONObject jsonobj = (JSONObject)JSONValue.parse(br);
+		System.out.println(jsonobj);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		 User user = objectMapper.readValue(jsonobj.toString(), User.class);
+		 System.out.println(user);
+			
+	}
 
 //================================================================//
 	//1.1 Http Protocol GET Request : JsonSimple 3rd party lib 사용
@@ -176,6 +338,8 @@ public class RestHttpClientApp {
 		//==> 내용읽기(JSON Value 확인)
 		JSONObject jsonobj = (JSONObject)JSONValue.parse(serverData);
 		System.out.println(jsonobj);
+		
+		
 	}
 	
 	
@@ -207,9 +371,9 @@ public class RestHttpClientApp {
 		BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
 		
 		//==> 다른 방법으로 serverData 처리 
-		//System.out.println("[ Server 에서 받은 Data 확인 ] ");
-		//String serverData = br.readLine();
-		//System.out.println(serverData);
+//		System.out.println("[ Server 에서 받은 Data 확인 ] ");
+//		String serverData = br.readLine();
+//		System.out.println(serverData);
 		
 		//==> API 확인 : Stream 객체를 직접 전달 
 		JSONObject jsonobj = (JSONObject)JSONValue.parse(br);
