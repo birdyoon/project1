@@ -30,9 +30,19 @@ public class RestHttpClientApp {
 
 			
 		
-		System.out.println("\n====================================\n");
-		// 1.1 Http Post 방식 Request : JsonSimple lib 사용
-		RestHttpClientApp.updateUserTest_JsonSimple();
+		
+		
+		RestHttpClientApp.addProductTest_JsonSimple();
+		
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+//		System.out.println("\n====================================\n");
+//		// 1.1 Http Post 방식 Request : JsonSimple lib 사용
+//		RestHttpClientApp.getUserListTest_JsonSimple();
+		
+//		System.out.println("\n====================================\n");
+//		// 1.1 Http Post 방식 Request : JsonSimple lib 사용
+//		RestHttpClientApp.updateUserTest_JsonSimple();
 		
 //		System.out.println("\n====================================\n");
 //		// 1.1 Http Post 방식 Request : JsonSimple lib 사용
@@ -64,21 +74,73 @@ public class RestHttpClientApp {
 	
 	}
 	
-	public static void getUserListTest_JsonSimple() throws Exception{
-	
+	//================================================================//		
+	public static void addProductTest_JsonSimple() throws Exception{
+		
 		HttpClient httpClient = new DefaultHttpClient();
 		
-		String url= 	"http://127.0.0.1:8080/user/json/getUserList";
+		String url= 	"http://127.0.0.1:8080/product/json/addProduct";
 		
 		HttpPost httpPost = new HttpPost(url);
 		httpPost.setHeader("Accept", "application/json");
 		httpPost.setHeader("Content-Type", "application/json");
 		
 		JSONObject json = new JSONObject();
-		json.put("CurrentPage", 1);
-		json.put("searchCondition", "");
-		json.put("searchKeyword", "");
-		json.put("pageSize", "3");
+		json.put("prodNo", "10069");
+		json.put("prodName", "우우우");
+		json.put("prodDetail", "ddd");
+		json.put("manuDate", "");
+		json.put("price", 22);
+		json.put("fileName", "");
+		json.put("regDate", "");
+		
+		
+		HttpEntity httpEntity01 = new StringEntity(json.toString(),"utf-8");
+		
+		httpPost.setEntity(httpEntity01);
+			
+		HttpResponse httpResponse = httpClient.execute(httpPost);
+		
+		System.out.println(httpResponse);
+		System.out.println();
+		
+		HttpEntity httpEntity = httpResponse.getEntity();
+		
+		InputStream is = httpEntity.getContent();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+		
+		System.out.println("[ Server 에서 받은 Data 확인 ] ");
+		String serverData = br.readLine();
+		System.out.println(serverData);
+		
+		//==> 내용읽기(JSON Value 확인)
+		JSONObject jsonobj = (JSONObject)JSONValue.parse(serverData);
+		System.out.println(jsonobj);
+	
+	
+	}
+	
+	
+	
+	
+	
+	
+	//================================================================//	
+	public static void getUserListTest_JsonSimple() throws Exception{
+	
+		HttpClient httpClient = new DefaultHttpClient();
+		
+		String url= 	"http://127.0.0.1:8080/user/json/UserList";
+		
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setHeader("Accept", "application/json");
+		httpPost.setHeader("Content-Type", "application/json");
+		
+		JSONObject json = new JSONObject();
+		json.put("currentPage", 1);
+//		json.put("searchCondition", "");
+//		json.put("searchKeyword", "");
+	//	json.put("pageSize", "3");
 		
 		
 		HttpEntity httpEntity01 = new StringEntity(json.toString(),"utf-8");
@@ -102,7 +164,9 @@ public class RestHttpClientApp {
 		System.out.println(serverData);
 		
 		JSONObject jsonobj = (JSONObject)JSONValue.parse(serverData);
-		System.out.println(jsonobj);
+		System.out.println(jsonobj.get("list"));
+		
+		
 	}
 	
 	
