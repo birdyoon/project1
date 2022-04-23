@@ -1,17 +1,20 @@
 package com.model2.mvc.web.user;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.user.UserService;
@@ -32,20 +35,34 @@ public class UserRestController {
 		System.out.println(this.getClass());
 	}
 	
-	@RequestMapping( value="json/listUser" , method=RequestMethod.POST )
+	@Value("#{commonProperties['pageUnit']}")
+	int pageUnit;
+	@Value("#{commonProperties['pageSize']}")
+	int pageSize;
+	
+	@RequestMapping( value="json/UserList" , method=RequestMethod.POST )
 	public Map getUserList( @RequestBody Search search ) throws Exception{
 		System.out.println(search);
 		System.out.println("/user/json/getUserList : POST");
 		
-//		if(search.getCurrentPage() ==0 ){
-//			search.setCurrentPage(1);
-//		}
-				
+		
+		if(search.getCurrentPage() ==0 ){
+			search.setCurrentPage(1);
+		}
+		search.setPageSize(pageSize);		
 		
 		Map<String , Object> map=userService.getUserList(search);
 		
+		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
+		System.out.println(resultPage);
 		
-		return map;
+		Map map01 = new HashMap();
+		map01.put("list", map.get("list"));
+		map01.put("resultPage", resultPage);
+		map01.put("search", search);
+		
+		
+		return map01;
 	}
 		
 	@RequestMapping( value="json/updateUser", method=RequestMethod.POST )
