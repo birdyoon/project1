@@ -40,7 +40,7 @@
 	   	<set>
 	   		prod_name 	= #{prodName} ,
 	   		prod_detail	=#{prodDetail} ,
-			manufacture_day	= #{manuDate} ,
+			manufacture_day	= replace(#{manuDate},'-', '') ,
 			price 				= #{price} ,
 			image_file				=	#{fileName}
 	   	</set>
